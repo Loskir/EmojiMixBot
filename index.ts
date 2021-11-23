@@ -35,7 +35,7 @@ bot.on('message:text', (ctx) => {
   }
 
   if (foundEmojis.length < 2) {
-    return ctx.reply('Type two or more compatible emojis')
+    return ctx.reply('Type two compatible emojis')
   }
 
   const emoji1 = foundEmojis[0]
@@ -64,7 +64,7 @@ bot.on('inline_query', async (ctx) => {
   }
 
   if (foundEmojis.length < 2) {
-    return ctx.answerInlineQuery([], {switch_pm_text: 'Type two or more compatible emojis', switch_pm_parameter: 'help'})
+    return ctx.answerInlineQuery([], {switch_pm_text: 'Type two compatible emojis', switch_pm_parameter: 'help'})
   }
 
   const emoji1 = foundEmojis[0]
