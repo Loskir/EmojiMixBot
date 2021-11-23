@@ -70,12 +70,16 @@ bot.on('inline_query', async (ctx) => {
   const emoji1 = foundEmojis[0]
   const emoji2 = foundEmojis[1]
 
-  return ctx.answerInlineQuery([{
-    type: 'photo',
-    id: emoji1[1] + '_' + emoji2[1],
-    thumb_url: createURL(emoji1, emoji2),
-    photo_url: createURL(emoji1, emoji2),
-  }, ])
+  try {
+    return ctx.answerInlineQuery([{
+      type: 'photo',
+      id: emoji1[1] + '_' + emoji2[1],
+      thumb_url: createURL(emoji1, emoji2),
+      photo_url: createURL(emoji1, emoji2),
+    }, ])
+  } catch (error) {
+    return ctx.answerInlineQuery([], {switch_pm_text: 'Unable to process emojis :(', switch_pm_parameter: 'error'})
+  }
 })
 
 bot.catch(console.error)
