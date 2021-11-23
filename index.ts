@@ -19,7 +19,7 @@ The bot might not work on desktop clients, try it on mobile.
 
 Inspired by https://tikolu.net/emojimix
 Author: @Loskir (my channel: @Loskirs)
-Source: https://github.com/EmojiMixBot`, {
+Source: https://github.com/Loskir/EmojiMixBot`, {
     parse_mode: 'HTML',
     reply_markup: new InlineKeyboard().switchInline('Try it out', '😳🤔'),
   })
