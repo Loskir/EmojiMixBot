@@ -11,12 +11,12 @@ const createURL = (emoji1: EmojiData, emoji2: EmojiData) => {
 };
 
 const parseEmojis = (text: string) => {
-  const foundEmojis: EmojiData[] = []
+  let foundEmojis: EmojiData[] = []
   let foundEmojisText = ''
   for (const emojiData of emojis) {
     const match = text.match(new RegExp(String.fromCodePoint(...emojiData[0]), 'g'))
     if (match) {
-      foundEmojis.concat(match.map(() => emojiData))
+      foundEmojis = foundEmojis.concat(match.map(() => emojiData))
       foundEmojisText += match.join('')
     }
   }
