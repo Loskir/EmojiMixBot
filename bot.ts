@@ -2,13 +2,29 @@ import {Bot, InlineKeyboard, InputFile} from './deps.deno.ts'
 
 import {EmojiData, emojis} from './emojis.ts'
 
-const API = "https://www.gstatic.com/android/keyboard/emojikitchen/";
+const API = "https://www.gstatic.com/android/keyboard/emojikitchen/"
 
 const createURL = (emoji1: EmojiData, emoji2: EmojiData) => {
   const u1 = emoji1[0].map(c => "u" + c.toString(16)).join("-");
   const u2 = emoji2[0].map(c => "u" + c.toString(16)).join("-");
   return `${API}${emoji1[2]}/${u1}/${u1}_${u2}.png`;
 };
+
+const parseEmojis = (text: string) => {
+  const foundEmojis: EmojiData[] = []
+  let foundEmojisText = ''
+  for (const emojiData of emojis) {
+    const match = text.match(new RegExp(String.fromCodePoint(...emojiData[0]), 'g'))
+    if (match) {
+      foundEmojis.concat(match.map(() => emojiData))
+      foundEmojisText += match.join('')
+    }
+  }
+  return {
+    foundEmojis,
+    foundEmojisText,
+  }
+}
 
 export const bot = new Bot(Deno.env.get('TOKEN') || '')
 bot.command('start', (ctx) => {
@@ -25,17 +41,13 @@ Source: https://github.com/Loskir/EmojiMixBot`, {
   })
 })
 bot.on('message:text', (ctx) => {
-  const text = ctx.msg.text
-  let foundEmojis: EmojiData[] = []
-  for (const emojiData of emojis) {
-    const match = text.match(new RegExp(String.fromCodePoint(...emojiData[0]), 'g'))
-    if (match) {
-      foundEmojis = [...foundEmojis, ...match.map(() => emojiData)]
-    }
-  }
+  const {
+    foundEmojis,
+    foundEmojisText,
+  } = parseEmojis(ctx.msg.text)
 
   if (foundEmojis.length < 2) {
-    return ctx.reply(`Type two compatible emojis (found compatible: ${foundEmojis.join('')})`)
+    return ctx.reply(`Type two compatible emojis (found compatible: ${foundEmojisText})`)
   }
 
   const emoji1 = foundEmojis[0]
@@ -54,17 +66,13 @@ bot.on('message:text', (ctx) => {
   }
 })
 bot.on('inline_query', (ctx) => {
-  const text = ctx.inlineQuery.query
-  let foundEmojis: EmojiData[] = []
-  for (const emojiData of emojis) {
-    const match = text.match(new RegExp(String.fromCodePoint(...emojiData[0] as number[]), 'g'))
-    if (match) {
-      foundEmojis = [...foundEmojis, ...match.map(() => emojiData)]
-    }
-  }
+  const {
+    foundEmojis,
+    foundEmojisText,
+  } = parseEmojis(ctx.inlineQuery.query)
 
   if (foundEmojis.length < 2) {
-    return ctx.answerInlineQuery([], {switch_pm_text: `Type two compatible emojis (found compatible: ${foundEmojis.join('')})`, switch_pm_parameter: 'help'})
+    return ctx.answerInlineQuery([], {switch_pm_text: `Type two compatible emojis (found compatible: ${foundEmojisText})`, switch_pm_parameter: 'help'})
   }
 
   const emoji1 = foundEmojis[0]
