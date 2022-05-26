@@ -1,16 +1,16 @@
-import {Bot, InlineKeyboard, InputFile} from 'grammy'
+import {Bot, InlineKeyboard, InputFile} from './deps.deno.ts'
 
-import {EmojiData, emojis} from './emojis'
+import {EmojiData, emojis} from './emojis.ts'
 
 const API = "https://www.gstatic.com/android/keyboard/emojikitchen/";
 
 const createURL = (emoji1: EmojiData, emoji2: EmojiData) => {
-  let u1 = emoji1[0].map(c => "u" + c.toString(16)).join("-");
-  let u2 = emoji2[0].map(c => "u" + c.toString(16)).join("-");
+  const u1 = emoji1[0].map(c => "u" + c.toString(16)).join("-");
+  const u2 = emoji2[0].map(c => "u" + c.toString(16)).join("-");
   return `${API}${emoji1[2]}/${u1}/${u1}_${u2}.png`;
 };
 
-const bot = new Bot(process.env.BOT_TOKEN || '')
+export const bot = new Bot(Deno.env.get('BOT_TOKEN') || '')
 bot.command('start', (ctx) => {
   return ctx.reply(`😊 I mix emojis using Google Emoji Kitchen API.
 Use me via inline mode or send me a message.
@@ -46,14 +46,14 @@ bot.on('message:text', (ctx) => {
       new InputFile({url: createURL(emoji1, emoji2)}),
       {reply_to_message_id: ctx.msg.message_id},
     )
-  } catch (error) {
+  } catch (_error) {
     return ctx.replyWithPhoto(
       'Unable to process emojis :(\nTry using different ones',
       {reply_to_message_id: ctx.msg.message_id},
     )
   }
 })
-bot.on('inline_query', async (ctx) => {
+bot.on('inline_query', (ctx) => {
   const text = ctx.inlineQuery.query
   let foundEmojis: EmojiData[] = []
   for (const emojiData of emojis) {
@@ -77,11 +77,9 @@ bot.on('inline_query', async (ctx) => {
       thumb_url: createURL(emoji1, emoji2),
       photo_url: createURL(emoji1, emoji2),
     }, ])
-  } catch (error) {
+  } catch (_error) {
     return ctx.answerInlineQuery([], {switch_pm_text: 'Unable to process emojis :(', switch_pm_parameter: 'error'})
   }
 })
 
 bot.catch(console.error)
-
-bot.start()
