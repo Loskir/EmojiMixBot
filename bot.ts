@@ -10,7 +10,7 @@ const createURL = (emoji1: EmojiData, emoji2: EmojiData) => {
   return `${API}${emoji1[2]}/${u1}/${u1}_${u2}.png`;
 };
 
-export const bot = new Bot(Deno.env.get('BOT_TOKEN') || '')
+export const bot = new Bot(Deno.env.get('TOKEN') || '')
 bot.command('start', (ctx) => {
   return ctx.reply(`😊 I mix emojis using Google Emoji Kitchen API.
 Use me via inline mode or send me a message.
