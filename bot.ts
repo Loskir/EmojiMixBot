@@ -28,14 +28,14 @@ bot.on('message:text', (ctx) => {
   const text = ctx.msg.text
   let foundEmojis: EmojiData[] = []
   for (const emojiData of emojis) {
-    const match = text.match(new RegExp(String.fromCodePoint(...emojiData[0] as number[]), 'g'))
+    const match = text.match(new RegExp(String.fromCodePoint(...emojiData[0]), 'g'))
     if (match) {
       foundEmojis = [...foundEmojis, ...match.map(() => emojiData)]
     }
   }
 
   if (foundEmojis.length < 2) {
-    return ctx.reply('Type two compatible emojis')
+    return ctx.reply(`Type two compatible emojis (found compatible: ${foundEmojis.join('')})`)
   }
 
   const emoji1 = foundEmojis[0]
@@ -64,7 +64,7 @@ bot.on('inline_query', (ctx) => {
   }
 
   if (foundEmojis.length < 2) {
-    return ctx.answerInlineQuery([], {switch_pm_text: 'Type two compatible emojis', switch_pm_parameter: 'help'})
+    return ctx.answerInlineQuery([], {switch_pm_text: `Type two compatible emojis (found compatible: ${foundEmojis.join('')})`, switch_pm_parameter: 'help'})
   }
 
   const emoji1 = foundEmojis[0]
