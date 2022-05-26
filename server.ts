@@ -12,7 +12,7 @@ serve({
   ['/' + Deno.env.get('TOKEN')]: async (req) => {
     if (req.method == "POST") {
       try {
-        return await handleUpdate(req);
+        await handleUpdate(req);
       } catch (err) {
         console.error(err);
       }
